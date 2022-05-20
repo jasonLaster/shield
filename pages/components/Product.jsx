@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/solid";
 import { RadioGroup } from "@headlessui/react";
 import Sizes from "./Sizes";
+import Gallery from "./Gallery";
 import useSWR from "swr";
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
@@ -20,8 +21,8 @@ export default function Example() {
 
   useEffect(() =>{
     if (data) {
-      setSelectedColor(product.colors[0])
-      setSelectedSize(product.sizes[2])
+      setSelectedColor(data.colors[0])
+      setSelectedSize(data.sizes[2])
     }
   },[data])
 
@@ -74,39 +75,7 @@ export default function Example() {
         </nav>
 
         {/* Image gallery */}
-        <div className="mt-6 max-w-2xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-3 lg:gap-x-8">
-          <div className="hidden aspect-w-3 aspect-h-4 rounded-lg overflow-hidden lg:block">
-            <img
-              src={product.images[0].src}
-              alt={product.images[0].alt}
-              className="w-full h-full object-center object-cover"
-            />
-          </div>
-          <div className="hidden lg:grid lg:grid-cols-1 lg:gap-y-8">
-            <div className="aspect-w-3 aspect-h-2 rounded-lg overflow-hidden">
-              <img
-                src={product.images[1].src}
-                alt={product.images[1].alt}
-                className="w-full h-full object-center object-cover"
-              />
-            </div>
-            <div className="aspect-w-3 aspect-h-2 rounded-lg overflow-hidden">
-              <img
-                src={product.images[2].src}
-                alt={product.images[2].alt}
-                className="w-full h-full object-center object-cover"
-              />
-            </div>
-          </div>
-          <div className="aspect-w-4 aspect-h-5 sm:rounded-lg sm:overflow-hidden lg:aspect-w-3 lg:aspect-h-4">
-            <img
-              src={product.images[3].src}
-              alt={product.images[3].alt}
-              className="w-full h-full object-center object-cover"
-            />
-          </div>
-        </div>
-
+       <Gallery product={product} />
         {/* Product info */}
         <div className="max-w-2xl mx-auto pt-10 pb-16 px-4 sm:px-6 lg:max-w-7xl lg:pt-16 lg:pb-24 lg:px-8 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8">
           <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
