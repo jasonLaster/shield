@@ -1,59 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/solid";
 import { RadioGroup } from "@headlessui/react";
+import Sizes from "./Sizes";
+import useSWR from "swr";
+const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
-const product = {
-  name: "Basic Tee 6-Pack",
-  price: "$192",
-  href: "#",
-  breadcrumbs: [
-    { id: 1, name: "Men", href: "#" },
-    { id: 2, name: "Clothing", href: "#" },
-  ],
-  images: [
-    {
-      src: "https://tailwindui.com/img/ecommerce-images/product-page-02-secondary-product-shot.jpg",
-      alt: "Two each of gray, white, and black shirts laying flat.",
-    },
-    {
-      src: "https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-01.jpg",
-      alt: "Model wearing plain black basic tee.",
-    },
-    {
-      src: "https://tailwindui.com/img/ecommerce-images/product-page-02-tertiary-product-shot-02.jpg",
-      alt: "Model wearing plain gray basic tee.",
-    },
-    {
-      src: "https://tailwindui.com/img/ecommerce-images/product-page-02-featured-product-shot.jpg",
-      alt: "Model wearing plain white basic tee.",
-    },
-  ],
-  colors: [
-    { name: "White", class: "bg-white", selectedClass: "ring-gray-400" },
-    { name: "Gray", class: "bg-gray-200", selectedClass: "ring-gray-400" },
-    { name: "Black", class: "bg-gray-900", selectedClass: "ring-gray-900" },
-  ],
-  sizes: [
-    { name: "XXS", inStock: false },
-    { name: "XS", inStock: true },
-    { name: "S", inStock: true },
-    { name: "M", inStock: true },
-    { name: "L", inStock: true },
-    { name: "XL", inStock: true },
-    { name: "2XL", inStock: true },
-    { name: "3XL", inStock: true },
-  ],
-  description:
-    'The Basic Tee 6-Pack allows you to fully express your vibrant personality with three grayscale options. Feeling adventurous? Put on a heather gray tee. Want to be a trendsetter? Try our exclusive colorway: "Black". Need to add an extra pop of color to your outfit? Our white tee has you covered.',
-  highlights: [
-    "Hand cut and sewn locally",
-    "Dyed with our proprietary colors",
-    "Pre-washed & pre-shrunk",
-    "Ultra-soft 100% cotton",
-  ],
-  details:
-    'The 6-Pack includes two black, two white, and two heather gray Basic Tees. Sign up for our subscription service and be the first to get new, exciting colors, like our upcoming "Charcoal Gray" limited release.',
-};
+// https://www.amazon.com/Karsaer-Vision-Shield-Sunglasses-Oversized/dp/B08R3K377X/ref=sr_1_2_sspa?crid=KE8WTJQLJE1V&keywords=80s%2Bvisor&qid=1653019248&sprefix=80s%2Bvisors%2Caps%2C114&sr=8-2-spons&th=1
+
 const reviews = { href: "#", average: 4, totalCount: 117 };
 
 function classNames(...classes) {
@@ -61,8 +14,21 @@ function classNames(...classes) {
 }
 
 export default function Example() {
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
-  const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
+  const [selectedColor, setSelectedColor] = useState();
+  const [selectedSize, setSelectedSize] = useState();
+  const { data, error } = useSWR("/api/product", fetcher);
+
+  useEffect(() =>{
+    if (data) {
+      setSelectedColor(product.colors[0])
+      setSelectedSize(product.sizes[2])
+    }
+  },[data])
+
+  if (error) return <div>failed to load</div>;
+  if (!data) return <div>loading...</div>;
+
+  const product = data;
 
   return (
     <div className="bg-white">
@@ -226,86 +192,11 @@ export default function Example() {
               </div>
 
               {/* Sizes */}
-              <div className="mt-10">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm text-gray-900 font-medium">Size</h3>
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-                  >
-                    Size guide
-                  </a>
-                </div>
-
-                <RadioGroup
-                  value={selectedSize}
-                  onChange={setSelectedSize}
-                  className="mt-4"
-                >
-                  <RadioGroup.Label className="sr-only">
-                    Choose a size
-                  </RadioGroup.Label>
-                  <div className="grid grid-cols-4 gap-4 sm:grid-cols-8 lg:grid-cols-4">
-                    {product.sizes.map((size) => (
-                      <RadioGroup.Option
-                        key={size.name}
-                        value={size}
-                        disabled={!size.inStock}
-                        className={({ active }) =>
-                          classNames(
-                            size.inStock
-                              ? "bg-white shadow-sm text-gray-900 cursor-pointer"
-                              : "bg-gray-50 text-gray-200 cursor-not-allowed",
-                            active ? "ring-2 ring-indigo-500" : "",
-                            "group relative border rounded-md py-3 px-4 flex items-center justify-center text-sm font-medium uppercase hover:bg-gray-50 focus:outline-none sm:flex-1 sm:py-6"
-                          )
-                        }
-                      >
-                        {({ active, checked }) => (
-                          <>
-                            <RadioGroup.Label as="span">
-                              {size.name}
-                            </RadioGroup.Label>
-                            {size.inStock ? (
-                              <span
-                                className={classNames(
-                                  active ? "border" : "border-2",
-                                  checked
-                                    ? "border-indigo-500"
-                                    : "border-transparent",
-                                  "absolute -inset-px rounded-md pointer-events-none"
-                                )}
-                                aria-hidden="true"
-                              />
-                            ) : (
-                              <span
-                                aria-hidden="true"
-                                className="absolute -inset-px rounded-md border-2 border-gray-200 pointer-events-none"
-                              >
-                                <svg
-                                  className="absolute inset-0 w-full h-full text-gray-200 stroke-2"
-                                  viewBox="0 0 100 100"
-                                  preserveAspectRatio="none"
-                                  stroke="currentColor"
-                                >
-                                  <line
-                                    x1={0}
-                                    y1={100}
-                                    x2={100}
-                                    y2={0}
-                                    vectorEffect="non-scaling-stroke"
-                                  />
-                                </svg>
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </RadioGroup.Option>
-                    ))}
-                  </div>
-                </RadioGroup>
-              </div>
-
+              <Sizes
+                product={product}
+                selectedSize={selectedSize}
+                setSelectedSize={setSelectedSize}
+              />
               <button
                 type="submit"
                 className="mt-10 w-full bg-indigo-600 border border-transparent rounded-md py-3 px-8 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
