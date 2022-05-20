@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/solid";
-import { RadioGroup } from "@headlessui/react";
+
+import Colors from "./Colors";
 import Sizes from "./Sizes";
 import Gallery from "./Gallery";
 import useSWR from "swr";
@@ -19,15 +20,20 @@ export default function Example() {
   const [selectedSize, setSelectedSize] = useState();
   const { data, error } = useSWR("/api/product", fetcher);
 
-  useEffect(() =>{
+  useEffect(() => {
     if (data) {
-      setSelectedColor(data.colors[0])
-      setSelectedSize(data.sizes[2])
+      setSelectedColor(data.colors[0]);
+      setSelectedSize(data.sizes[2]);
     }
-  },[data])
+  }, [data]);
 
   if (error) return <div>failed to load</div>;
-  if (!data) return <div>loading...</div>;
+  if (!data)
+    return (
+      <div>
+        <div className="w-full h-1 bg-indigo-600"></div>
+      </div>
+    );
 
   const product = data;
 
@@ -75,7 +81,7 @@ export default function Example() {
         </nav>
 
         {/* Image gallery */}
-       <Gallery product={product} />
+        <Gallery product={product} />
         {/* Product info */}
         <div className="max-w-2xl mx-auto pt-10 pb-16 px-4 sm:px-6 lg:max-w-7xl lg:pt-16 lg:pb-24 lg:px-8 lg:grid lg:grid-cols-3 lg:grid-rows-[auto,auto,1fr] lg:gap-x-8">
           <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
@@ -119,48 +125,11 @@ export default function Example() {
 
             <form className="mt-10">
               {/* Colors */}
-              <div>
-                <h3 className="text-sm text-gray-900 font-medium">Color</h3>
-
-                <RadioGroup
-                  value={selectedColor}
-                  onChange={setSelectedColor}
-                  className="mt-4"
-                >
-                  <RadioGroup.Label className="sr-only">
-                    Choose a color
-                  </RadioGroup.Label>
-                  <div className="flex items-center space-x-3">
-                    {product.colors.map((color) => (
-                      <RadioGroup.Option
-                        key={color.name}
-                        value={color}
-                        className={({ active, checked }) =>
-                          classNames(
-                            color.selectedClass,
-                            active && checked ? "ring ring-offset-1" : "",
-                            !active && checked ? "ring-2" : "",
-                            "-m-0.5 relative p-0.5 rounded-full flex items-center justify-center cursor-pointer focus:outline-none"
-                          )
-                        }
-                      >
-                        <RadioGroup.Label as="span" className="sr-only">
-                          {color.name}
-                        </RadioGroup.Label>
-                        <span
-                          aria-hidden="true"
-                          className={classNames(
-                            color.class,
-                            "h-8 w-8 border border-black border-opacity-10 rounded-full"
-                          )}
-                        />
-                      </RadioGroup.Option>
-                    ))}
-                  </div>
-                </RadioGroup>
-              </div>
-
-              {/* Sizes */}
+              <Colors
+                product={product}
+                selectedColor={selectedColor}
+                setSelectedColor={setSelectedColor}
+              />
               <Sizes
                 product={product}
                 selectedSize={selectedSize}
