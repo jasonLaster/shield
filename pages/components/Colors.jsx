@@ -4,6 +4,7 @@ function classNames(...classes) {
 }
 
 export default function Gallery({ product, selectedColor, setSelectedColor }) {
+  if (!product) return null;
   return (
     <div>
       <h3 className="text-sm text-gray-900 font-medium">Color</h3>
