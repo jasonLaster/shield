@@ -4,6 +4,7 @@ function classNames(...classes) {
 }
 
 export default function Sizes({ selectedSize, setSelectedSize, product }) {
+  if (!product) return null;
   return (
     <div className="mt-10">
       <div className="flex items-center justify-between">
