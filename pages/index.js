@@ -1,5 +1,5 @@
 import Head from "next/head";
-import Shirt from "./components/shirt";
+import Product from "./components/Product";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
@@ -12,7 +12,7 @@ export default function Home() {
       </Head>
 
       <main>
-        <Shirt />
+        <Product />
       </main>
     </div>
   );
